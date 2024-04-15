@@ -14,7 +14,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="homescreen">
         <Stack.Screen name="homescreen" component={homescreen} options={{ headerShown: false }} />
         <Stack.Screen name="secondpage" component={secondpage} options={{ headerShown: false }} />
-        <Stack.Screen name="ProductItem" component={ProductItem} options={{ headerShown: true }} />
+        <Stack.Screen name="ProductItem" component={ProductItem} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

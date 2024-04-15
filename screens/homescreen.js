@@ -65,6 +65,7 @@ const ButtonText = styled.Text`
   color: white;
   font-size: 18px;
   font-weight: bold;
+  
 `;
 
 export default function HomeScreen() {

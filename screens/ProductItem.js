@@ -1,8 +1,9 @@
 import React from 'react';
-import styled from 'styled-components/native';
 import { TouchableOpacity } from 'react-native';
-import { Rate, Button } from '@ant-design/react-native';
+import { Button } from '@ant-design/react-native';
+import styled from 'styled-components/native';
 
+// Styled components
 const Card = styled.View`
   border-radius: 6px;
   background-color: #FFF;
@@ -32,51 +33,35 @@ const Price = styled.Text`
   margin-top: 4px;
 `;
 
-const RateContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: 4px;
-`;
-
-const Reviews = styled.Text`
-  font-size: 14px;
-  color: #999;
-  margin-left: 8px;
-`;
-
 const Description = styled.Text`
   font-size: 14px;
   color: #666;
   margin-top: 4px;
 `;
 
-const ButtonContainer = styled.View`
+// Styled TouchableOpacity for ButtonContainer
+const ButtonContainer = styled(TouchableOpacity)`
   margin-top: 12px;
   height: 50px;
   justify-content: center;
   align-items: center;
 `;
 
-const product = {
-  imageUrl: require('../assets/Blackchair.png'), // Make sure the path is correct
-};
+// ProductItem component
+const ProductItem = ({ route }) => {
+  const { title, price, imageUrl } = route.params;
 
-const ProductItem = () => {
   return (
     <Card>
       <ImageContainer>
-        {/* <StyledImage source={product.imageUrl} /> */}
+        <StyledImage source={imageUrl} />
       </ImageContainer>
-      <Title>Curved Chair</Title>
-      <Price>$320</Price>
-      <RateContainer>
-        <Rate defaultValue={4.5} count={5} />
-        <Reviews>(347 Reviews)</Reviews>
-      </RateContainer>
+      <Title>{title}</Title>
+      <Price>{price}</Price>
       <Description>
         Our products combine functional utility with elegance...
       </Description>
-      <ButtonContainer as={TouchableOpacity}>
+      <ButtonContainer>
         <Button type="primary">Add to cart</Button>
       </ButtonContainer>
     </Card>

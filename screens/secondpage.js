@@ -143,8 +143,8 @@ const SecondPage = () => {
     flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
   };
 
-  const handleProductPress = () => {
-    navigation.navigate('ProductItem');
+  const handleProductPress = (item) => {
+    navigation.navigate('ProductItem', item);
   };
 
   const products = [
@@ -220,7 +220,7 @@ const SecondPage = () => {
         horizontal
         data={filteredProducts}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={handleProductPress}>
+          <TouchableOpacity onPress={() => handleProductPress(item)}>
             <ProductCard>
               <ProductImage source={item.imageUrl} />
               <ProductTitle>{item.title}</ProductTitle>

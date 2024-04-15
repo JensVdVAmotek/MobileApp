@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import ProductItem from './ProductItem'; // Import ProductItem component
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
 
 const { width } = Dimensions.get('window');
 
@@ -119,6 +120,51 @@ const ProductPrice = styled(Text)`
   margin-top: 5px;
 `;
 
+const NavBarContainer = styled(View)`
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 10px;
+  background-color: white;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+`;
+
+const NavBarIcon = styled(TouchableOpacity)`
+  align-items: center;
+`;
+
+const NavBarText = styled(Text)`
+  font-size: 10px;
+  color: #333;
+`;
+
+const NavigationBar = () => {
+  const navigation = useNavigation();
+  
+  return (
+    <NavBarContainer>
+       <NavBarIcon onPress={() => navigation.navigate('secondpage')}>
+        <Ionicons name="home-outline" size={24} color="#333" />
+        <NavBarText>Home</NavBarText>
+      </NavBarIcon>
+      <NavBarIcon onPress={() => navigation.navigate('Cart')}>
+        <Ionicons name="cart-outline" size={24} color="#333" />
+        <NavBarText>Cart</NavBarText>
+      </NavBarIcon>
+      <NavBarIcon onPress={() => navigation.navigate('Favorites')}>
+        <Ionicons name="heart-outline" size={24} color="#333" />
+        <NavBarText>Favorites</NavBarText>
+      </NavBarIcon>
+      <NavBarIcon onPress={() => navigation.navigate('Profile')}>
+        <Ionicons name="person-outline" size={24} color="#333" />
+        <NavBarText>Profile</NavBarText>
+      </NavBarIcon>
+    </NavBarContainer>
+  );
+};
+
 const SecondPage = () => {
   const navigation = useNavigation(); // Initialize navigation
 
@@ -150,8 +196,8 @@ const SecondPage = () => {
   const products = [
     { id: '1', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
     { id: '2', title: 'Utrecht Chair', category: 'Sofa', price: '$350.99', imageUrl: require('../assets/utrecht.png') },
-    { id: '3', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
-    { id: '4', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
+    { id: '3', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Lamp.png') },
+    { id: '4', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Koeienligzetel.png') },
     { id: '5', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
   ];
 
@@ -233,6 +279,7 @@ const SecondPage = () => {
         snapToAlignment="start"
         snapToInterval={width * 0.4 + 20}
       />
+      <NavigationBar />
     </Container>
   );
 };

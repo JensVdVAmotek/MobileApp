@@ -115,7 +115,7 @@ const NavigationBar = () => {
         <Ionicons name="home-outline" size={24} color="#333" />
         <NavBarText>Home</NavBarText>
       </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Cart')}>
+      <NavBarIcon onPress={() => navigation.navigate('Checkoutscreen')}>
         <Ionicons name="cart-outline" size={24} color="#333" />
         <NavBarText>Cart</NavBarText>
       </NavBarIcon>

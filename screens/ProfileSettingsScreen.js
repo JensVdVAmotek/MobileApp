@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Image } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,6 +8,37 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Container = styled.View`
   background-color: white;
   flex: 1;
+`;
+
+const Header = styled(Container)`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: -90px;
+  margin-top: 70px;
+  margin-left: 10px;
+`;
+
+const ArrowContainer = styled.View`
+  padding: 10px;
+`;
+
+const ProfileContainer = styled.View`
+  padding: 20px;
+  margin-top:-150px;
+  align-items: center;
+`;
+
+const ProfileImage = styled.Image`
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+`;
+
+const ProfileName = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
 `;
 
 const SettingsContainer = styled.ScrollView`
@@ -26,24 +58,6 @@ const SettingsOption = styled.TouchableOpacity`
 
 const SettingsText = styled.Text`
   font-size: 18px;
-`;
-
-const ProfileContainer = styled.View`
-  padding: 20px;
-  margin-top: 100px;
-  align-items: center;
-`;
-
-const ProfileImage = styled.Image`
-  width: 100px;
-  height: 100px;
-  border-radius: 50px;
-`;
-
-const ProfileName = styled.Text`
-  font-size: 24px;
-  font-weight: bold;
-  margin-top: 10px;
 `;
 
 const NavBarContainer = styled.View`
@@ -66,13 +80,25 @@ const NavBarText = styled.Text`
   color: #333;
 `;
 
+const ArrowBackIcon = ({ onPress }) => (
+  <ArrowContainer>
+    <TouchableOpacity onPress={onPress}>
+      <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <Path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    </TouchableOpacity>
+  </ArrowContainer>
+);
+
 const ProfileSettingsScreen = () => {
   const navigation = useNavigation();
 
   return (
     <Container>
+      <Header>
+        <ArrowBackIcon onPress={() => navigation.goBack()} />
+      </Header>
       <ProfileContainer>
-        {/* Vervang 'path-to-profile-image.png' door het werkelijke pad naar de afbeelding */}
         <ProfileImage source={require('../assets/Profile.jpeg')} />
         <ProfileName>Jens Van de Velde</ProfileName>
       </ProfileContainer>
@@ -96,11 +122,11 @@ const ProfileSettingsScreen = () => {
       </SettingsContainer>
       
       <NavBarContainer>
-        <NavBarIcon onPress={() => navigation.navigate('secondpage')}>
+        <NavBarIcon onPress={() => navigation.navigate('Home')}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <NavBarText>Home</NavBarText>
         </NavBarIcon>
-        <NavBarIcon onPress={() => navigation.navigate('Checkoutscreen')}>
+        <NavBarIcon onPress={() => navigation.navigate('Checkout')}>
           <Ionicons name="cart-outline" size={24} color="#333" />
           <NavBarText>Winkelwagen</NavBarText>
         </NavBarIcon>

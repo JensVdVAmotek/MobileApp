@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import ProductItem from './ProductItem'; // Import ProductItem component
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
+import NavigationBar from '../components/NavigationBar';
 
 const { width } = Dimensions.get('window');
 
@@ -140,30 +141,7 @@ const NavBarText = styled(Text)`
   color: #333;
 `;
 
-const NavigationBar = () => {
-  const navigation = useNavigation();
-  
-  return (
-    <NavBarContainer>
-       <NavBarIcon onPress={() => navigation.navigate('secondpage')}>
-        <Ionicons name="home-outline" size={24} color="#333" />
-        <NavBarText>Home</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Cart')}>
-        <Ionicons name="cart-outline" size={24} color="#333" />
-        <NavBarText>Cart</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Favorites')}>
-        <Ionicons name="heart-outline" size={24} color="#333" />
-        <NavBarText>Favorites</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Profile')}>
-        <Ionicons name="person-outline" size={24} color="#333" />
-        <NavBarText>Profile</NavBarText>
-      </NavBarIcon>
-    </NavBarContainer>
-  );
-};
+
 
 const SecondPage = () => {
   const navigation = useNavigation(); // Initialize navigation
@@ -279,7 +257,7 @@ const SecondPage = () => {
         snapToAlignment="start"
         snapToInterval={width * 0.4 + 20}
       />
-      <NavigationBar />
+     <NavigationBar />
     </Container>
   );
 };

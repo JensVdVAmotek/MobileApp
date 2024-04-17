@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
+import NavigationBar from '../components/NavigationBar';
 
 const Container = styled.View`
   background-color: white;
@@ -106,30 +107,7 @@ const NavBarText = styled.Text`
   color: #333;
 `;
 
-const NavigationBar = () => {
-  const navigation = useNavigation();
-  
-  return (
-    <NavBarContainer>
-       <NavBarIcon onPress={() => navigation.navigate('secondpage')}>
-        <Ionicons name="home-outline" size={24} color="#333" />
-        <NavBarText>Home</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Checkoutscreen')}>
-        <Ionicons name="cart-outline" size={24} color="#333" />
-        <NavBarText>Cart</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Favorites')}>
-        <Ionicons name="heart-outline" size={24} color="#333" />
-        <NavBarText>Favorites</NavBarText>
-      </NavBarIcon>
-      <NavBarIcon onPress={() => navigation.navigate('Profile')}>
-        <Ionicons name="person-outline" size={24} color="#333" />
-        <NavBarText>Profile</NavBarText>
-      </NavBarIcon>
-    </NavBarContainer>
-  );
-};
+
 
 const ArrowBackIcon = () => (
   <IconWrapper>
@@ -177,7 +155,7 @@ const ProductItem = ({ route }) => {
       {/* White bar at the bottom */}
       <View style={{ backgroundColor: 'white', flex: 1 }} />
       <NavigationBar />
-    </Container>
+          </Container>
   );
 };
 

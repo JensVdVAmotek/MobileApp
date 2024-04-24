@@ -4,7 +4,8 @@ import Svg, { Path } from 'react-native-svg';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
+import { useDispatch } from 'react-redux';
+import { addItem } from '../redux/cartSlice';
 import NavigationBar from '../components/NavigationBar';
 
 const Container = styled.View`
@@ -107,8 +108,6 @@ const NavBarText = styled.Text`
   color: #333;
 `;
 
-
-
 const ArrowBackIcon = () => (
   <IconWrapper>
     <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" xmlns="http://www.w3.org/2000/svg">
@@ -128,6 +127,11 @@ const HeartIcon = () => (
 const ProductItem = ({ route }) => {
   const { title, price, imageUrl } = route.params;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addItem({ title, price, imageUrl }));
+  };
 
   return (
     <Container>
@@ -140,7 +144,7 @@ const ProductItem = ({ route }) => {
         </IconContainer>
       </Header>
       <ImageContainer>
-        <StyledImage source={imageUrl} />
+        <StyledImage source={{ uri: imageUrl }} />
       </ImageContainer>
       <Card>
         <Title>{title}</Title>
@@ -148,14 +152,13 @@ const ProductItem = ({ route }) => {
         <Description>
           The stylish chair is the most simple way to pull your room into the new modern look.
         </Description>
-        <LinkButton onPress={() => console.log('Add to cart pressed')}>
+        <LinkButton onPress={handleAddToCart}>
           <LinkButtonText>Add to cart</LinkButtonText>
         </LinkButton>
       </Card>
-      {/* White bar at the bottom */}
       <View style={{ backgroundColor: 'white', flex: 1 }} />
       <NavigationBar />
-          </Container>
+    </Container>
   );
 };
 

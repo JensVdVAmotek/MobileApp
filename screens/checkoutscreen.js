@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
-import Svg, { Path } from 'react-native-svg';
 import NavigationBar from '../components/NavigationBar';
+import { addItem, removeItem, setQuantity } from '../redux/cartSlice'; // Import setQuantity action
 
 const Container = styled(SafeAreaView)`
   flex: 1;
@@ -13,6 +14,7 @@ const Container = styled(SafeAreaView)`
 const Header = styled(View)`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center; /* Align items vertically */
   padding: 16px;
 `;
 
@@ -54,18 +56,20 @@ const ShoppingCartList = styled(ScrollView)`
 
 const ProductContainer = styled(View)`
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 16px;
+  padding: 0 16px; /* Add horizontal padding */
 `;
 
 const ProductDetails = styled(View)`
   flex: 1;
+  margin-left: 16px; /* Add left margin for spacing */
 `;
 
 const ProductImage = styled(Image)`
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 4px;
 `;
 
@@ -83,6 +87,7 @@ const ProductPrice = styled(Text)`
 const QuantitySelector = styled(View)`
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end; /* Align items to the right */
 `;
 
 const QuantityButton = styled(TouchableOpacity)`
@@ -112,98 +117,74 @@ const CheckoutButton = styled(TouchableOpacity)`
   margin-left: 20px;
   margin-right: 20px;
   margin-bottom: 60px;
-
 `;
 
 const CheckoutButtonText = styled(Text)`
   color: #fff;
   font-size: 16px;
   font-weight: bold;
-  
 `;
-
-const IconWrapper = styled(View)`
-  padding: 8px;
-  border-radius: 30px;
-  background-color: grey;
-  margin-top: 10px;
-`;
-
-const ArrowBackIcon = () => (
-  <IconWrapper>
-    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" xmlns="http://www.w3.org/2000/svg">
-      <Path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-    </Svg>
-  </IconWrapper>
-);
-
-const HeartIcon = () => (
-  <IconWrapper>
-    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" xmlns="http://www.w3.org/2000/svg">
-      <Path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-    </Svg>
-  </IconWrapper>
-);
 
 const CheckoutScreen = () => {
-  const [products, setProducts] = useState([
-    { id: '12332', title: 'Leather Chair', color: 'Brown', price: '228.00', quantity: 4 },
-    { id: '12356', title: 'Coffee Table', color: 'Cherry', price: '128.00', quantity: 1 }
-  ]);
+  const products = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+
+  const [quantities, setQuantities] = useState(
+    products.reduce((acc, product) => ({ ...acc, [product.title]: product.quantity || 1 }), {})
+  );
 
   const calculateTotal = () => {
-    return products.reduce((acc, product) => acc + parseFloat(product.price) * product.quantity, 0).toFixed(2);
+    return products.reduce((acc, product) => acc + parseFloat(product.price) * quantities[product.title], 0).toFixed(2);
   };
 
-  const incrementQuantity = (productId) => {
-    setProducts(prevProducts =>
-      prevProducts.map(product =>
-        product.id === productId ? { ...product, quantity: product.quantity + 1 } : product
-      )
-    );
+  const handleQuantityChange = (title, value) => {
+    const newQuantities = { ...quantities, [title]: value };
+    setQuantities(newQuantities);
+    dispatch(setQuantity({ title, quantity: value })); // Dispatch setQuantity action
   };
 
-  const decrementQuantity = (productId) => {
-    setProducts(prevProducts =>
-      prevProducts.map(product =>
-        product.id === productId && product.quantity > 0 ? { ...product, quantity: product.quantity - 1 } : product
-      )
-    );
+  const handleRemoveItem = (title) => {
+    dispatch(removeItem(title)); // Dispatch removeItem action
+    const newQuantities = { ...quantities };
+    delete newQuantities[title];
+    setQuantities(newQuantities);
   };
 
   return (
     <Container>
       <Header>
-        <ArrowBackIcon />
-        <HeartIcon />
+        <Title>Checkout</Title>
       </Header>
       <SecondHeader>
         <SecondHeaderTitle>Shopping Cart</SecondHeaderTitle>
-        <SecondHeaderText>2 items</SecondHeaderText>
+        <SecondHeaderText>{products.length} items</SecondHeaderText>
         <Divider />
       </SecondHeader>
       <ShoppingCartList>
-        {products.map(product => (
-          <ProductContainer key={product.id}>
-            <ProductImage source={require('../assets/Blackchair.png')} />
+        {products.map((product) => (
+          <ProductContainer key={product.title}>
+            <TouchableOpacity onPress={() => handleRemoveItem(product.title)}>
+              <Ionicons name="ios-close" size={20} color="#333" />
+            </TouchableOpacity>
+            <ProductImage source={{ uri: product.imageUrl }} />
             <ProductDetails>
               <ProductTitle>{product.title}</ProductTitle>
-              <ProductPrice>Colour: {product.color} | Item #{product.id}</ProductPrice>
+              <ProductPrice>${product.price} each</ProductPrice>
             </ProductDetails>
             <QuantitySelector>
-              <QuantityButton onPress={() => decrementQuantity(product.id)}>
-                <Ionicons name="remove-outline" size={16} color="black" />
+              <QuantityButton onPress={() => handleQuantityChange(product.title, quantities[product.title] - 1)}>
+                <Ionicons name="ios-remove" size={20} color="#333" />
               </QuantityButton>
-              <QuantityText>{product.quantity}</QuantityText>
-              <QuantityButton onPress={() => incrementQuantity(product.id)}>
-                <Ionicons name="add-outline" size={16} color="black" />
+              <QuantityText>{quantities[product.title]}</QuantityText>
+              <QuantityButton onPress={() => handleQuantityChange(product.title, quantities[product.title] + 1)}>
+                <Ionicons name="ios-add" size={20} color="#333" />
               </QuantityButton>
             </QuantitySelector>
           </ProductContainer>
         ))}
       </ShoppingCartList>
       <TotalContainer>
-        <TotalText>Sub total ${calculateTotal()}</TotalText>
+        <TotalText>Total: ${calculateTotal()}</TotalText>
         <TotalText>(Total does not include shipping)</TotalText>
       </TotalContainer>
       <CheckoutButton>

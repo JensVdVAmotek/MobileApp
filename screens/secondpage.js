@@ -141,8 +141,6 @@ const NavBarText = styled(Text)`
   color: #333;
 `;
 
-
-
 const SecondPage = () => {
   const navigation = useNavigation(); // Initialize navigation
 
@@ -172,11 +170,11 @@ const SecondPage = () => {
   };
 
   const products = [
-    { id: '1', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
-    { id: '2', title: 'Utrecht Chair', category: 'Sofa', price: '$350.99', imageUrl: require('../assets/utrecht.png') },
-    { id: '3', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Lamp.png') },
-    { id: '4', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Koeienligzetel.png') },
-    { id: '5', title: 'Stylish Chair', category: 'Chair', price: '$150.99', imageUrl: require('../assets/Blackchair.png') },
+    { id: '1', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Blackchair.png' },
+    { id: '2', title: 'Utrecht Chair', category: 'Sofa', price: 350.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/utrecht.png' },
+    { id: '3', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Koeienligzetel.png' },
+    { id: '4', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Lamp.png' },
+    { id: '5', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Blackchair.png' },
   ];
 
   const filteredProducts = products.filter(product => {
@@ -246,7 +244,7 @@ const SecondPage = () => {
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleProductPress(item)}>
             <ProductCard>
-              <ProductImage source={item.imageUrl} />
+              <ProductImage source={{ uri: item.imageUrl }} />
               <ProductTitle>{item.title}</ProductTitle>
               <ProductPrice>{item.price}</ProductPrice>
             </ProductCard>

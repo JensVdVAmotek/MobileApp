@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NavigationBar from '../components/NavigationBar';
 
 const Container = styled.View`
   background-color: white;
@@ -25,7 +27,7 @@ const ArrowContainer = styled.View`
 
 const ProfileContainer = styled.View`
   padding: 20px;
-  margin-top:-150px;
+  margin-top: -150px;
   align-items: center;
 `;
 
@@ -41,8 +43,23 @@ const ProfileName = styled.Text`
   margin-top: 10px;
 `;
 
+const Greeting = () => {
+  const hour = new Date().getHours();
+  let greeting;
+
+  if (hour < 12) {
+    greeting = 'Goedemorgen';
+  } else if (hour >= 12 && hour < 18) {
+    greeting = 'Goedemiddag';
+  } else {
+    greeting = 'Goedeavond';
+  }
+
+  return <ProfileName>{greeting}</ProfileName>;
+};
+
 const SettingsContainer = styled.ScrollView`
-  margin-top:20px;
+  margin-top: 20px;
   margin-left: 30px;
   margin-right: 30px;
 `;
@@ -92,6 +109,26 @@ const ArrowBackIcon = ({ onPress }) => (
 
 const ProfileSettingsScreen = () => {
   const navigation = useNavigation();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const isLoggedIn = await AsyncStorage.getItem('loggedIn') === 'true';
+      setLoggedIn(isLoggedIn);
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.setItem('loggedIn', 'false');
+    setLoggedIn(false);
+    navigation.navigate('Home');
+  };
+
+  const handleLogin = () => {
+    navigation.navigate('Login', { setLoggedIn });
+  };
 
   return (
     <Container>
@@ -100,45 +137,17 @@ const ProfileSettingsScreen = () => {
       </Header>
       <ProfileContainer>
         <ProfileImage source={require('../assets/Profile.jpeg')} />
-        <ProfileName>Jens Van de Velde</ProfileName>
+        <Greeting />
       </ProfileContainer>
       <SettingsContainer>
-        <SettingsOption onPress={() => {}}>
-          <SettingsText>Wijzig profielnaam</SettingsText>
-          <Ionicons name="chevron-forward-outline" size={24} color="#333" />
-        </SettingsOption>
-        <SettingsOption onPress={() => {}}>
-          <SettingsText>Wijzig wachtwoord</SettingsText>
-          <Ionicons name="chevron-forward-outline" size={24} color="#333" />
-        </SettingsOption>
-        <SettingsOption onPress={() => {}}>
-          <SettingsText>Wijzig e-mailadres</SettingsText>
-          <Ionicons name="chevron-forward-outline" size={24} color="#333" />
-        </SettingsOption>
-        <SettingsOption onPress={() => navigation.navigate('LoginScreen')}>
-          <SettingsText style={{ color: 'red' }}>Uitloggen</SettingsText>
-          <Ionicons name="chevron-forward-outline" size={24} color="red" />
+       
+       
+        <SettingsOption onPress={() => loggedIn ? handleLogout() : handleLogin()}>
+          <SettingsText style={{ color: loggedIn ? 'red' : 'green' }}>{loggedIn ? 'Uitloggen' : 'Inloggen'}</SettingsText>
+          <Ionicons name="chevron-forward-outline" size={24} color={loggedIn ? 'red' : 'green'} />
         </SettingsOption>
       </SettingsContainer>
-      
-      <NavBarContainer>
-        <NavBarIcon onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home-outline" size={24} color="#333" />
-          <NavBarText>Home</NavBarText>
-        </NavBarIcon>
-        <NavBarIcon onPress={() => navigation.navigate('Checkout')}>
-          <Ionicons name="cart-outline" size={24} color="#333" />
-          <NavBarText>Winkelwagen</NavBarText>
-        </NavBarIcon>
-        <NavBarIcon onPress={() => navigation.navigate('Favorites')}>
-          <Ionicons name="heart-outline" size={24} color="#333" />
-          <NavBarText>Favorieten</NavBarText>
-        </NavBarIcon>
-        <NavBarIcon onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name="person-outline" size={24} color="#333" />
-          <NavBarText>Profiel</NavBarText>
-        </NavBarIcon>
-      </NavBarContainer>
+     <NavigationBar />
     </Container>
   );
 };

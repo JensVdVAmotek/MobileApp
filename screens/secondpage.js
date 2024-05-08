@@ -1,11 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, Image, TextInput, TouchableOpacity, FlatList, Dimensions, Animated } from 'react-native';
 import styled from 'styled-components/native';
 import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-import ProductItem from './ProductItem'; // Import ProductItem component
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install this package
+import { useNavigation } from '@react-navigation/native';
+import firebase from '../firebase'; // Importeer je Firebase-configuratie
+import { collection, getDocs } from 'firebase/firestore';
+// Importeer firestore vanuit je firebase-configuratiebestand
+import { firestore } from '../firebase';
 import NavigationBar from '../components/NavigationBar';
+
 
 const { width } = Dimensions.get('window');
 
@@ -121,28 +124,8 @@ const ProductPrice = styled(Text)`
   margin-top: 5px;
 `;
 
-const NavBarContainer = styled(View)`
-  flex-direction: row;
-  justify-content: space-around;
-  padding: 10px;
-  background-color: white;
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-`;
-
-const NavBarIcon = styled(TouchableOpacity)`
-  align-items: center;
-`;
-
-const NavBarText = styled(Text)`
-  font-size: 10px;
-  color: #333;
-`;
-
 const SecondPage = () => {
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -150,6 +133,7 @@ const SecondPage = () => {
   const [currentFirstIndex, setCurrentFirstIndex] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuAnimation = useRef(new Animated.Value(-300)).current;
+  const [products, setProducts] = useState([]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -166,19 +150,45 @@ const SecondPage = () => {
   };
 
   const handleProductPress = (item) => {
-    navigation.navigate('ProductItem', item);
+    navigation.navigate('ProductItem', {
+      title: item.Title,
+      price: item.Price,
+      imageUrl: item.ImageUrl
+    });
   };
+  
 
-  const products = [
-    { id: '1', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Blackchair.png' },
-    { id: '2', title: 'Utrecht Chair', category: 'Sofa', price: 350.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/utrecht.png' },
-    { id: '3', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Koeienligzetel.png' },
-    { id: '4', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Lamp.png' },
-    { id: '5', title: 'Stylish Chair', category: 'Chair', price: 150.99, imageUrl: 'https://cloudhosting-dwmi.onrender.com/Blackchair.png' },
-  ];
+  const fetchProductsFromFirestore = async () => {
+    try {
+      const productsCollection = collection(firestore, 'Products');
+      const querySnapshot = await getDocs(productsCollection);
+      const productsData = [];
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        productsData.push({
+          id: doc.id,
+          Title: data.Title,
+          ImageUrl: data.ImageUrl,
+          Price: data.Price, // Geen conversie nodig als het al een number is
+          Category: data.Category,
+          Productnummer: data.Productnummer
+        });
+      });
+      
+      
+      setProducts(productsData);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchProductsFromFirestore();
+  }, []);
 
   const filteredProducts = products.filter(product => {
-    return product.title.toLowerCase().includes(searchTerm.toLowerCase()) && (selectedCategory === '' || product.category === selectedCategory);
+    return product.Title.toLowerCase().includes(searchTerm.toLowerCase()) && (selectedCategory === '' || product.Category === selectedCategory);
   });
 
   return (
@@ -244,9 +254,9 @@ const SecondPage = () => {
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleProductPress(item)}>
             <ProductCard>
-              <ProductImage source={{ uri: item.imageUrl }} />
-              <ProductTitle>{item.title}</ProductTitle>
-              <ProductPrice>{item.price}</ProductPrice>
+              <ProductImage source={{ uri: item.ImageUrl }} />
+              <ProductTitle>{item.Title}</ProductTitle>
+              <ProductPrice>{item.Price}</ProductPrice>
             </ProductCard>
           </TouchableOpacity>
         )}
@@ -255,7 +265,7 @@ const SecondPage = () => {
         snapToAlignment="start"
         snapToInterval={width * 0.4 + 20}
       />
-     <NavigationBar />
+       <NavigationBar />
     </Container>
   );
 };

@@ -26,6 +26,8 @@
     "antd": "^5.16.1",
     "expo": "^49.0.23",
     "expo-status-bar": "~1.6.0",
+    "firebase": "^10.11.1",
+    "json5": "^2.2.3",
     "metro": "^0.80.8",
     "react": "18.2.0",
     "react-native": "^0.72.10",
